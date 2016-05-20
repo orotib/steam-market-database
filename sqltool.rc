@@ -1,0 +1,4 @@
+urlid steam
+url jdbc:hsqldb:hsql://localhost/steam
+username orotib
+password jelszo
