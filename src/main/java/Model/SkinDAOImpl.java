@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /*import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;*/
@@ -19,6 +22,7 @@ public class SkinDAOImpl implements SkinDAO {
 
 	public Connection c;
 	public List<Skin> searchedSkin = new ArrayList<Skin>();
+	private static Logger logger = LoggerFactory.getLogger(SkinDAOImpl.class);
 
 	public SkinDAOImpl(String filename) {
 		try {
@@ -29,7 +33,8 @@ public class SkinDAOImpl implements SkinDAO {
 
 			initDB(filename);
 		} catch (SQLException e) {
-			System.out.println("Server is not available!");
+			// System.out.println("Server is not available!");
+			logger.error("Server is not available!");
 			System.exit(-1);
 		}
 		// EntityManagerFactory factory =
@@ -44,13 +49,15 @@ public class SkinDAOImpl implements SkinDAO {
 				try {
 					c.prepareStatement(in.nextLine()).execute();
 				} catch (SQLException e) {
-					System.out.println(e.getMessage());
+					// System.out.println(e.getMessage());
+					logger.error("SQLException caught: ", e);
 					System.exit(-1);
 				}
 			}
 			in.close();
 		} catch (FileNotFoundException e) {
-			System.out.println(e.getMessage());
+			// System.out.println(e.getMessage());
+			logger.error("FileNotFoundException caught: ", e);
 			System.exit(-2);
 		}
 
@@ -92,7 +99,8 @@ public class SkinDAOImpl implements SkinDAO {
 						rs.getString(4), con, rs.getDouble(6)));
 			}
 		} catch (SQLException e) {
-			System.out.println("SQLException 100 " + e.getMessage());
+			// System.out.println("SQLException 100 " + e.getMessage());
+			logger.error("SQLException caught: ", e);
 		}
 		return searchedSkin.size();
 	}
@@ -122,7 +130,8 @@ public class SkinDAOImpl implements SkinDAO {
 		try {
 			c.prepareStatement(b.toString()).executeUpdate();
 		} catch (SQLException e) {
-			System.out.println("Update error!");
+			// System.out.println("Update error!");
+			logger.error("Update error!");
 			return false;
 		}
 		return true;

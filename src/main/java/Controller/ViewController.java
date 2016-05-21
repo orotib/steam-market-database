@@ -25,7 +25,12 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ViewController implements Initializable {
+
+	private static Logger logger = LoggerFactory.getLogger(ViewController.class);
 
 	@FXML
 	TextField textFieldCollection;
@@ -213,7 +218,7 @@ public class ViewController implements Initializable {
 					radioButtonPriceD.selectedProperty().set(true);
 			}
 		});
-		
+
 		comboBoxTypeD.setOnMouseClicked(textFieldCollectionD.getOnMouseClicked());
 		comboBoxWeaponD.setOnMouseClicked(textFieldCollectionD.getOnMouseClicked());
 		textFieldSkinD.setOnMouseClicked(textFieldCollectionD.getOnMouseClicked());
@@ -235,15 +240,18 @@ public class ViewController implements Initializable {
 			condition = condition.split(" ")[0].toUpperCase();
 		double price;
 		if (!NumberUtils.isNumber(textFieldPrice.getText())) {
-			System.out.println("Wrong price!");
+			// System.out.println("Wrong price!");
+			logger.debug("Wrong price!");
 			return;
 		}
 		price = Double.parseDouble(textFieldPrice.getText());
 		Skin addedSkin = new Skin(collection, Type.valueOf(type), weapon, skin, Condition.valueOf(condition), price);
 		if (DAO.insertSkin(addedSkin, "steam"))
-			System.out.println("Added: " + addedSkin);
+			logger.info("Added: {}", addedSkin);
+		// System.out.println("Added: " + addedSkin);
 		else
-			System.out.println("Skin already contains!");
+			logger.info("The database already contains: {}", addedSkin);
+		// System.out.println("Skin already contains!");
 	}
 
 	@FXML
@@ -275,13 +283,15 @@ public class ViewController implements Initializable {
 			try {
 				min = Double.parseDouble(textFieldPriceMinS.getText().replace(",", "."));
 			} catch (NumberFormatException e) {
-				System.out.println("Wrong Min value!");
+				// System.out.println("Wrong Min value!");
+				logger.debug("Wrong Min value!");
 				return;
 			}
 			try {
 				max = Double.parseDouble(textFieldPriceMaxS.getText().replace(",", "."));
 			} catch (NumberFormatException e) {
-				System.out.println("Wrong Max Value!");
+				logger.debug("Wrong Max value!");
+				// System.out.println("Wrong Max Value!");
 				return;
 			}
 			q.deleteCharAt(q.length() - 1);
@@ -289,9 +299,11 @@ public class ViewController implements Initializable {
 		}
 
 		if (DAO.searchSkin(q.toString()) > 0)
-			System.out.println("Found skin(s): " + DAO.searchedSkin.size());
+			// System.out.println("Found skin(s): " + DAO.searchedSkin.size());
+			logger.info("Found skin(s): {}", DAO.searchedSkin.size());
 		else
-			System.out.println("Nothing found!");
+			// System.out.println("Nothing found!");
+			logger.info("Nothing found!");
 	}
 
 	@FXML
@@ -301,23 +313,26 @@ public class ViewController implements Initializable {
 		String weapon = comboBoxWeaponU.getSelectionModel().getSelectedItem();
 		String skin = textFieldSkinU.getText();
 		String condition = comboBoxConditionU.getSelectionModel().getSelectedItem();
-		
+
 		if (condition.contains("-"))
 			condition = condition.split("-")[0].toUpperCase();
 		else
 			condition = condition.split(" ")[0].toUpperCase();
 		double price;
 		if (!NumberUtils.isNumber(textFieldNewPrice.getText())) {
-			System.out.println("Wrong price!");
+			// System.out.println("Wrong price!");
+			logger.debug("Wrong price!");
 			return;
 		}
 		price = Double.parseDouble(textFieldNewPrice.getText());
 		Skin updateSkin = new Skin(collection, Type.valueOf(type), weapon, skin, Condition.valueOf(condition), price);
 
 		if (DAO.updateSkinPrice(updateSkin, "steam", price))
-			System.out.println("Successfull updated!");
+			// System.out.println("Successful updated!");
+			logger.info("Successful updated!");
 		else
-			System.out.println("Unsuccessfull updated!");
+			// System.out.println("Unsuccessful updated!");
+			logger.info("Unsuccessful updated!");
 	}
 
 	@FXML
@@ -349,13 +364,15 @@ public class ViewController implements Initializable {
 			try {
 				min = Double.parseDouble(textFieldPriceMinD.getText().replace(",", "."));
 			} catch (NumberFormatException e) {
-				System.out.println("Wrong Min value!");
+				// System.out.println("Wrong Min value!");
+				logger.debug("Wrong Min value!");
 				return;
 			}
 			try {
 				max = Double.parseDouble(textFieldPriceMaxD.getText().replace(",", "."));
 			} catch (NumberFormatException e) {
-				System.out.println("Wrong Max Value!");
+				// System.out.println("Wrong Max Value!");
+				logger.debug("Wrong Max value!");
 				return;
 			}
 			q.deleteCharAt(q.length() - 1);
@@ -363,9 +380,11 @@ public class ViewController implements Initializable {
 		}
 
 		if (DAO.deleteSkin(q.toString()))
-			System.out.println("Successfull deleted!");
+			// System.out.println("Successful deleted!");
+			logger.info("Seuccessful deleted!");
 		else
-			System.out.println("Unsuccessfull deleted!");
+			// System.out.println("Unsuccessful deleted!");
+			logger.info("Unsuccessful deleted!");
 	}
 
 	@FXML
@@ -405,34 +424,39 @@ public class ViewController implements Initializable {
 				st.execute();
 			}
 		} catch (FileNotFoundException e) {
-			System.out.println("FileNotFound caught: " + e.getMessage());
+			System.out.println("FileNotFound caught: " + e);
 		} catch (IOException e) {
-			System.out.println("IOException caught: " + e.getMessage());
+			System.out.println("IOException caught: " + e);
 		} catch (SQLException e) {
-			System.out.println("SQLException caught: " + e.getMessage());
+			System.out.println("SQLException caught: " + e);
 		}
+		logger.debug("Initialize done!");
 	}
 
 	@FXML
 	public void handleGetLinkButton(ActionEvent event) {
 		if (DAO.searchedSkin.size() == 0) {
-			System.out.println("No skins!");
+			// System.out.println("No skins!");
+			logger.info("No skins!");
 			return;
 		}
 		for (Skin s : DAO.searchedSkin) {
-			System.out.println(DAO.getSkinLink(s));
+			// System.out.println(DAO.getSkinLink(s));
+			logger.info(DAO.getSkinLink(s));
 		}
 	}
 
 	@FXML
 	public void handleListButton(ActionEvent event) {
 		if (DAO.searchedSkin.size() == 0) {
-			System.out.println("No skin(s) in database!");
+			// System.out.println("No skin(s) in database!");
+			logger.info("No skin(s); in database!");
 			return;
 		}
 		int itemcount = 1;
 		for (Skin s : DAO.searchedSkin) {
-			System.out.println(itemcount++ + ". " + s);
+			// System.out.println(itemcount++ + ". " + s);
+			logger.info("{}. {}", itemcount++, s);
 		}
 	}
 }

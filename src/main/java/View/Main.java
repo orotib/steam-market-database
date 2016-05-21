@@ -10,7 +10,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.TabPane;
 import javafx.fxml.FXMLLoader;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Main extends Application {
+	
+	private static Logger logger = LoggerFactory.getLogger(Main.class);
+	
 	@Override
 	public void start(Stage primaryStage) {
 		try {
@@ -22,7 +28,8 @@ public class Main extends Application {
 			primaryStage.resizableProperty().set(false);
 			primaryStage.setOnCloseRequest(c -> closeEvent(c));
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Exception caught: ", e);
+			System.exit(-1);
 		}
 	}
 
@@ -34,7 +41,7 @@ public class Main extends Application {
 		try {
 			ViewController.DAO.c.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error("SQLException caught: ", e.getMessage());
 		}
 	}
 
