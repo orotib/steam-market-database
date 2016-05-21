@@ -20,7 +20,7 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			TabPane root = (TabPane) FXMLLoader.load(getClass().getResource("\\View1.fxml"));
+			TabPane root = (TabPane) FXMLLoader.load(getClass().getResource("/View/View1.fxml"));
 			Scene scene = new Scene(root, 300, 300);
 			primaryStage.setScene(scene);
 			primaryStage.show();
